@@ -1,15 +1,28 @@
 
+from datetime import datetime
 import logging
-
+from logger import gethostname, _current_user, _calling_func_name
 from pymongo.connection import Connection
 
 
 class MongoFormatter(logging.Formatter):
     def format(self, record):
-        """Format exception object as a string"""
-        data = record._raw.copy()
-        if 'exc_info' in data and data['exc_info']:
-            data['exc_info'] = self.formatException(data['exc_info'])
+        """Format exception object as a dict"""
+        data = {
+            'name' : record.name,
+            'level' : record.levelname,
+            'file' : record.pathname,
+            'line_no' : record.lineno,
+            'msg' : record.msg,
+            'args' : list(record.args),
+            'user' : _current_user(),
+            'funcname' : _calling_func_name(),
+            'time' : datetime.now(),
+            'host' : gethostname()
+        }
+        print str(data)
+        if record.exc_info:
+            data['exc_info'] = self.formatException(record.exc_info)
         return data
     
 

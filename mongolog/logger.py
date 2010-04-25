@@ -6,35 +6,6 @@ import os
 from socket import gethostname
 from datetime import datetime
 
-__all__ = ['MongoLogRecord', 'MongoLogger']
-
-class MongoLogRecord(logging.LogRecord):
-
-    def __init__(self, name, level, fn, lno, msg, args,exc_info, func, extra=None):
-        logging.LogRecord.__init__(self, name, level, fn, lno, msg, args,exc_info, func)
-
-        self.username = _current_user()
-        self.funcname = _calling_func_name()
-
-        self._raw = {
-            'name' : name,
-            'level' : _level_to_str(level),
-            'file' : fn,
-            'line_no' : lno,
-            'msg' : msg,
-            'args' : list(args),
-            'exc_info' : exc_info,
-            'user' : self.username,
-            'funcname' : self.funcname,
-            'time' : datetime.now(),
-            'host' : gethostname()
-        }
-
-class MongoLogger(logging.getLoggerClass()):
-
-    def makeRecord(self, *args, **kwargs):
-        return MongoLogRecord(*args, **kwargs)
-
 def _level_to_str(level):
     """ Convert a numeric logging level to string representation  """
     if logging.DEBUG == level:
