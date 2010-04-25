@@ -20,7 +20,6 @@ class MongoFormatter(logging.Formatter):
             'time' : datetime.now(),
             'host' : gethostname()
         }
-        print str(data)
         if record.exc_info:
             data['exc_info'] = self.formatException(record.exc_info)
         return data
